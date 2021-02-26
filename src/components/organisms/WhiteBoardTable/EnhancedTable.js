@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -10,8 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Paper from "@material-ui/core/Paper";
 import { Divider, Grid, Typography } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
-import { downloadFile, uploadFile } from "../../../services/FileStorage";
+import { downloadFile } from "../../../services/FileStorage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,7 +76,7 @@ const StyledTableCell = withStyles((theme) => ({
   },
 }))(TableCell);
 
-const StyledTableRow = withStyles((theme) => ({
+const StyledTableRow = withStyles(() => ({
   root: {
     "&:nth-of-type(odd)": {
       backgroundColor: "#e6f2ff",
@@ -105,7 +104,9 @@ function EnhancedTableHead(props) {
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              <Typography className={classes.header} variant="subtitle1">
+                {headCell.label}
+              </Typography>
               {orderBy === headCell.id ? (
                 <span className={classes.visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -131,24 +132,15 @@ export default function EnhancedTable(props) {
   const [order, setOrder] = React.useState(props.defaultOrder);
   const [orderBy, setOrderBy] = React.useState(props.defaultOrderBy);
   const { rows } = props;
-  const [selectedFile, setSelectedFile] = useState("");
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  const history = useHistory();
 
   const handleClick = async (fileName) => {
     await downloadFile(fileName);
-  };
-
-  const onFileChangeHandler = async (e) => {
-    e.preventDefault();
-    console.log("e.target.file --> ", e.target.files[0]);
-    setSelectedFile(e.target.files[0]);
-    await uploadFile(e.target.files[0]);
   };
 
   return (
@@ -176,7 +168,7 @@ export default function EnhancedTable(props) {
                       <StyledTableRow
                         hover
                         style={{ cursor: "pointer" }}
-                        onClick={(event) => handleClick(row.name)}
+                        onClick={() => handleClick(row.name)}
                         role="checkbox"
                         tabIndex={-1}
                         key={row.name}
@@ -200,7 +192,7 @@ export default function EnhancedTable(props) {
               Upload File
             </Typography>
             <Divider style={{ margin: "8px" }} />
-            <input type="file" style={{ margin: "10px" }} name="file" onChange={onFileChangeHandler} />
+            <input type="file" style={{ margin: "10px" }} name="file" onChange={props.onUploadHandler} />
           </Paper>
         </Grid>
       </Grid>

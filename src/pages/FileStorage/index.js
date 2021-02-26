@@ -4,11 +4,13 @@ import TopNavigationBar from "../../components/organisms/TopNavigationBar/TopNav
 import SideNavigationBar from "../../components/organisms/SideNavigationBar/SideNavigationBar";
 import EnhancedTable from "../../components/organisms/WhiteBoardTable/EnhancedTable";
 import { useHistory } from "react-router-dom";
-import { fetchAllFiles } from "../../services/FileStorage";
+import { fetchAllFiles, uploadFile } from "../../services/FileStorage";
 
 export default function FileStorage() {
   const history = useHistory();
   const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState("");
+
   useEffect(() => {
     async function fetchData() {
       var files = await fetchAllFiles();
@@ -19,17 +21,21 @@ export default function FileStorage() {
       setFiles(files);
     }
     fetchData();
-  }, []);
-  const headCells = [{ id: "name", numeric: false, label: "Name Of The File" }];
+  }, [selectedFile]);
 
-  // const rows = [createData("123345"), createData("12345"), createData("1233245")];
-  // function createData(name) {
-  //   return { name };
-  // }
+  const headCells = [{ id: "name", numeric: false, label: " File-Name (click to download)" }];
+
   const handleTabChange = (event, value) => {
     if (value === "FileStorage") {
       history.push("/file-storage");
     }
+  };
+
+  const onUploadHandler = async (e) => {
+    e.preventDefault();
+    console.log("e.target.file --> ", e.target.files[0]);
+    setSelectedFile(e.target.files[0]);
+    await uploadFile(e.target.files[0]);
   };
 
   return (
@@ -37,7 +43,14 @@ export default function FileStorage() {
       header={<TopNavigationBar />}
       sidebar={<SideNavigationBar handleTabChange={handleTabChange} />}
       body={
-        <EnhancedTable headCells={headCells} rows={files} defaultOrderBy="name" defaultOrder="asc" rowsPerPage={5} />
+        <EnhancedTable
+          headCells={headCells}
+          rows={files}
+          defaultOrderBy="name"
+          defaultOrder="asc"
+          rowsPerPage={5}
+          onUploadHandler={onUploadHandler}
+        />
       }
     />
   );
