@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     width: "100%",
     marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(4)
   },
   table: {
     minWidth: "auto",
@@ -148,7 +149,7 @@ export default function EnhancedTable(props) {
       <Grid container spacing={4}>
         <Grid item xs={6}>
           <Paper className={classes.paper} style={{ backgroundColor: "#edf5f6" }}>
-            <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+            <Typography className={classes.title} variant="h6" id="tableTitle" component="div"  >
               Download File
             </Typography>
             <Divider style={{ margin: "8px" }} />
@@ -172,11 +173,12 @@ export default function EnhancedTable(props) {
                         role="checkbox"
                         tabIndex={-1}
                         key={row.name}
-                      >
-                        <StyledTableCell component="th" id={labelId} scope="row" padding="checkbox">
-                          {row.name}
+                      > 
+                        <StyledTableCell>
+                          <Typography  variant="body2" style={{fontSize:17}}>
+                            {row.name}
+                          </Typography>
                         </StyledTableCell>
-                        {/* <StyledTableCell>{row.name}</StyledTableCell> */}
                       </StyledTableRow>
                     );
                   })}
